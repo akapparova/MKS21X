@@ -1,7 +1,6 @@
 public class Barcode implements Comparable<Barcode>{
     
     private String _zip;
-    private int _checkDigit;
     
     String[] code = {"||:::", ":::||", "::|:|", "::||:", ":|::|", ":|:|:", ":||::", "|:::|", "|::|:", "|:|::"};
 
@@ -21,17 +20,12 @@ public class Barcode implements Comparable<Barcode>{
 	    Integer.parseInt(zip);
 	}
 	catch (NumberFormatException e){
-	    throw new RuntimeException("Zip should contain only digits!");
+	    throw new IllegalArgumentException("Zip should contain only digits!");
 	}
 	if (zip.length() != 5){
-	    throw new RuntimeException("Zip shouldn't be longer than 5 digits!");
+	    throw new IllegalArgumentException("Zip shouldn't be longer than 5 digits!");
 	}
 	_zip = zip;
-	_checkDigit = checkSum();
-    }
-
-    public Barcode clone(){
-	return new Barcode(_zip);
     }
 
     public String toString(){
@@ -39,13 +33,19 @@ public class Barcode implements Comparable<Barcode>{
 	for (int i = 0; i < 5; i++){
 	    ans += code[Integer.parseInt(_zip.substring(i, i + 1))];
 	}
-	ans += code[_checkDigit];
-	return _zip + _checkDigit + "       " + ans;
+	ans += code[checkSum()];
+	return _zip + checkSum() + "       " + ans;
     }
-
 
     public int compareTo(Barcode other){
 	return toString().compareTo(other.toString());
     }
 
+    public String toZip(String code){
+	String zip =  "";
+	for (int i = 0; i < code.length() - 5; i += 5){
+	    zip += code.charAt(i);
+	}
+	return zip;
+    }
 }
